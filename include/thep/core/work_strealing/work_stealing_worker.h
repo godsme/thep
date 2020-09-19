@@ -19,7 +19,7 @@ using worker_id = std::size_t;
 struct work_stealing_worker {
    using pool = work_stealing_pool;
 
-   work_stealing_worker(pool& p, worker_id id) noexcept;
+   work_stealing_worker(worker_id id, pool& p) noexcept;
    auto id() const noexcept -> worker_id { return id_; }
 
    auto launch() noexcept -> void;

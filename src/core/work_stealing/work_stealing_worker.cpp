@@ -7,7 +7,7 @@
 
 THEP_NS_BEGIN
 
-work_stealing_worker::work_stealing_worker(pool& p, worker_id id) noexcept
+work_stealing_worker::work_stealing_worker(worker_id id, pool& p) noexcept
    : pool_{p}, id_{id}
 {}
 

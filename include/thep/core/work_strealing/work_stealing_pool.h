@@ -23,6 +23,9 @@ struct work_stealing_pool {
    ~work_stealing_pool() noexcept;
 
 private:
+   auto launch_workers() noexcept -> void;
+
+private:
    friend work_stealing_worker;
    std::vector<work_stealing_worker*> workers_;
    std::size_t num_of_workers_;
