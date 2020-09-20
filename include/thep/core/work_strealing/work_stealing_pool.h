@@ -5,19 +5,19 @@
 #ifndef THEP_WORK_STEALING_POOL_H
 #define THEP_WORK_STEALING_POOL_H
 
-#include <thep/thep_ns.h>
+#include <thep/core/worker_id.h>
 #include <cstddef>
 #include <vector>
 
 THEP_NS_BEGIN
 
-struct job;
+struct resumable;
 struct work_stealing_worker;
 
 struct work_stealing_pool {
    explicit work_stealing_pool(std::size_t num_of_workers) noexcept;
 
-   auto schedule_job(job&) noexcept -> void;
+   auto schedule_job(resumable&) noexcept -> void;
    auto shutdown() noexcept -> void;
 
    ~work_stealing_pool() noexcept;
@@ -26,7 +26,11 @@ private:
    auto launch_workers() noexcept -> void;
 
 private:
-   friend work_stealing_worker;
+   auto shutdown_notified() const noexcept -> bool;
+   auto try_steal(worker_id) noexcept -> resumable*;
+
+private:
+   friend struct work_stealing_worker;
    std::vector<work_stealing_worker*> workers_;
    std::size_t num_of_workers_;
 };

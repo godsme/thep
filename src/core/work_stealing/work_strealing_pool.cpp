@@ -13,7 +13,7 @@ work_stealing_pool::work_stealing_pool(std::size_t num_of_workers) noexcept
    launch_workers();
 }
 
-auto work_stealing_pool::schedule_job(job&) noexcept -> void {
+auto work_stealing_pool::schedule_job(resumable&) noexcept -> void {
 }
 
 auto work_stealing_pool::shutdown() noexcept -> void {
@@ -29,6 +29,14 @@ auto work_stealing_pool::launch_workers() noexcept -> void {
    for(auto& worker : workers_) {
       worker->launch();
    }
+}
+
+auto work_stealing_pool::shutdown_notified() const noexcept -> bool {
+   return false;
+}
+
+auto work_stealing_pool::try_steal(worker_id) noexcept -> resumable* {
+   return nullptr;
 }
 
 work_stealing_pool::~work_stealing_pool() noexcept {

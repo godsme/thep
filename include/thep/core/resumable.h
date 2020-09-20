@@ -2,25 +2,18 @@
 // Created by Darwin Yuan on 2020/9/19.
 //
 
-#ifndef THEP_JOB_H
-#define THEP_JOB_H
+#ifndef THEP_RESUMABLE_H
+#define THEP_RESUMABLE_H
 
-#include <thep/thep_ns.h>
+#include <thep/job_queue/simple_list_element.h>
 #include <cstddef>
 #include <limits>
 
 THEP_NS_BEGIN
 
-struct job {
-   enum class result_t {
-      exec_later,
-      await,
-      done,
-      shutdown
-   };
-
-   virtual auto exec() noexcept -> result_t = 0;
-   virtual ~job() = 0;
+struct resumable : simple_list_element {
+   virtual auto resume() noexcept -> bool = 0;
+   virtual ~resumable() = 0;
 
    virtual auto add_ref() noexcept -> void {}
    virtual auto release() noexcept -> void { delete this; }
@@ -34,4 +27,4 @@ private:
 
 THEP_NS_END
 
-#endif //THEP_JOB_H
+#endif //THEP_RESUMABLE_H

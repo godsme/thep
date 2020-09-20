@@ -5,16 +5,15 @@
 #ifndef THEP_WORK_STEALING_WORKER_H
 #define THEP_WORK_STEALING_WORKER_H
 
-#include <thep/thep_ns.h>
+#include <thep/job_queue/thread_safe_simple_list.h>
 #include <cstddef>
 #include <thread>
+#include <thep/core/worker_id.h>
 
 THEP_NS_BEGIN
 
-struct job;
+struct resumable;
 struct work_stealing_pool;
-
-using worker_id = std::size_t;
 
 struct work_stealing_worker {
    using pool = work_stealing_pool;
@@ -25,10 +24,17 @@ struct work_stealing_worker {
    auto launch() noexcept -> void;
    auto join() noexcept -> void;
 
-   auto sched_job(job *job) noexcept -> void;
-   auto steal_job() noexcept -> job*;
+   auto sched_job(resumable *job) noexcept -> void;
+   auto take_a_job() noexcept -> resumable*;
 
 private:
+   auto run() -> void;
+   auto get_a_job() noexcept -> resumable*;
+   auto resume_job(resumable* job) noexcept -> void;
+   auto resume_once(resumable* job) noexcept -> bool;
+
+private:
+   thread_safe_simple_list job_queue_{};
    std::thread thread_;
    worker_id id_;
    pool& pool_;
